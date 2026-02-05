@@ -5,7 +5,7 @@ description: Create a minimal Vite Vue 3 library starter with pnpm workspace, di
 
 # Vite Lib Vue 3 PNPM Starter Skill
 
-This skill creates a minimal Vite + Vue 3 library project template using pnpm workspace for dependency management. It directly generates all necessary files without using Vite's official initialization commands
+This skill creates a minimal Vite + Vue 3 library project template using pnpm workspace for dependency management. It directly generates all necessary files without using Vite's official initialization commands.
 
 ## Core Features
 
