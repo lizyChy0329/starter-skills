@@ -1,99 +1,48 @@
-# Vite Lib Vue 3 PNPM Starter
+# vite-lib-vue-pnpm-starter-skill
 
-## What is this library?
+Quickly scaffold a Vite + Vue 3 component library starter template (pnpm workspace + TypeScript).
 
-This is a minimal Vite + Vue 3 library starter template that uses pnpm workspace for dependency management. It provides a ready-to-use structure for creating Vue 3 component libraries with TypeScript support, designed to streamline the bootstrap process for library developers.
+## Purpose
+
+Initialize a Vue 3 component library project with:
+
+- Vue 3 + TypeScript support
+- Vite build tool
+- pnpm workspace for monorepo management
+- Built-in playground for local testing
+- Automatic TypeScript declaration generation
 
 ## Usage
 
-To use this starter as a skill, run the following commands:
-
 ```bash
-# Add starter skill
 npx skills add https://github.com/lizyChy0329/vite-lib-vue-pnpm-starter-skill.git --skill vite-lib-vue-pnpm-starter-skill
 ```
 
-## What is it used for?
-
-This starter template is designed to help developers quickly set up a Vue 3 component library with the following capabilities:
-
-- Create a structured Vue 3 component library with TypeScript support
-- Use Vite as the build tool for optimized development and production builds
-- Implement a monorepo structure using pnpm workspace
-- Generate TypeScript type declarations automatically
-- Provide a playground environment for local testing and development
-- Follow best practices for library development (e.g., externalizing Vue dependency)
-
-## When to use this library
-
-This starter is suitable for:
-
-- **Creating a new Vue 3 component library** that needs TypeScript support
-- **Developers preferring pnpm** as their package manager
-- **Projects requiring a monorepo structure** for better dependency management
-- **Teams needing a consistent library bootstrap process** with minimal configuration
-- **Libraries that need a playground** for testing components during development
-- **Projects targeting modern browsers** with ES modules support
-- **Developers who want to avoid Vite's official initialization** and prefer direct file generation
-
-## When NOT to use this library
-
-This starter is NOT suitable for:
-
-- **Projects using npm or yarn** as the package manager (pnpm only)
-- **Vue 2 projects** (this is specifically designed for Vue 3)
-- **Projects not requiring TypeScript** (TypeScript is integrated by default)
-- **Applications that don't need a library structure** (use a regular Vue 3 app template instead)
-- **Projects needing complex build configurations** (this uses a minimal configuration approach)
-- **Libraries that need to bundle Vue** (Vue is configured as an external dependency)
-- **Teams unfamiliar with pnpm workspaces** (requires knowledge of pnpm's workspace functionality)
-
-## Core Features
-
-- Direct file generation without manual intervention
-- pnpm workspace for monorepo structure management
-- Vue 3 + TypeScript support
-- Minimal configuration approach
-- Built-in playground for testing
-- TypeScript declaration generation
-- Optimized build process
-
-## Project Structure
+## Generated Project Structure
 
 ```
 project-root/
-├── .gitignore
-├── index.ts
-├── package.json
-├── pnpm-workspace.yaml
-├── tsconfig.json
-├── tsconfig.app.json
-├── tsconfig.node.json
-├── vite.config.ts
+├── package.json          # Main library config with workspace and build scripts
+├── pnpm-workspace.yaml   # pnpm workspace configuration
+├── vite.config.ts        # Library build config (Vue as external)
+├── tsconfig.json         # TypeScript project references config
+├── index.ts              # Library entry point
 ├── src/
-│   ├── index.ts
+│   ├── index.ts          # Component exports
 │   ├── components/
-│   │   ├── index.ts
-│   │   └── Counter.vue
+│   │   ├── index.ts      # Unified component exports
+│   │   └── Counter.vue   # Example component
 │   └── style.css
-├── playground/
-│   ├── .gitignore
-│   ├── index.html
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── tsconfig.app.json
-│   ├── tsconfig.node.json
+├── playground/           # Local testing environment
+│   ├── package.json      # Uses workspace:* to reference main library
 │   ├── vite.config.ts
-│   ├── public/
 │   └── src/
 │       ├── main.ts
-│       ├── App.vue
-│       ├── style.css
-│       └── assets/
-└── dist/ (generated after build)
+│       └── App.vue
+└── dist/                 # Build output (ES/UMD/type declarations)
 ```
 
-## Getting Started
+## Workflow
 
 ### 1. Install Dependencies
 
@@ -101,43 +50,83 @@ project-root/
 pnpm install
 ```
 
-### 2. Build the Library
+### 2. Build Library
 
 ```bash
 pnpm build
 ```
 
-### 3. Run the Playground
+Output:
+- `dist/index.es.js` - ES module
+- `dist/index.umd.js` - UMD module
+- `dist/index.d.ts` - Type declarations
+
+### 3. Start Playground for Testing
 
 ```bash
 cd playground && pnpm dev
 ```
 
-## Key Configuration Details
+## Key Configurations
 
-- **Vue as External Dependency**: Vue is not bundled into the library to avoid version conflicts
-- **TypeScript References**: Uses project references for faster compilation
-- **pnpm Workspace**: Enables monorepo structure with local library reference
-- **Minimal Configuration**: Focused settings for library development
-- **Type Checking**: `vue-tsc` runs before build to ensure type safety
+### vite.config.ts
 
-## Important Notes
+```typescript
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import dts from 'vite-plugin-dts'
 
-- **pnpm Only**: This project is configured exclusively for pnpm
-- **No Vite Official Commands**: Uses direct file generation instead
-- **Workspace Dependency**: Playground uses `workspace:*` to reference the latest library code
-- **External Vue**: Applications using this library must provide their own Vue instance
+export default defineConfig({
+  plugins: [vue(), dts()],
+  build: {
+    lib: {
+      entry: './index.ts',
+      formats: ['es', 'umd'],
+      name: 'MyLib',
+      fileName: 'index',
+    },
+    rollupOptions: {
+      external: ['vue'], // Vue not bundled into library
+      output: {
+        globals: { vue: 'Vue' },
+      },
+    },
+  },
+})
+```
 
-## Troubleshooting
+### package.json
 
-### Why pnpm instead of npm?
-Faster installation, stricter dependency management, and better monorepo support.
+```json
+{
+  "type": "module",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"]
+}
+```
 
-### Why separate package.json for playground?
-Isolated environment with its own dependencies, referencing the main library via workspace.
+### Playground References Main Library
 
-### Why externalize Vue in build?
-Avoids duplicate bundling and version conflicts, follows library best practices.
+```json
+{
+  "dependencies": {
+    "my-lib": "workspace:*"
+  }
+}
+```
 
-### Why use TypeScript References?
-Enables independent compilation of subprojects for faster builds and more accurate type checking.
+## When to Use
+
+- Creating a Vue 3 component library
+- Using pnpm for dependency management
+- Need monorepo structure for library and testing environment
+- Require TypeScript type support
+
+## Limitations
+
+- **pnpm only** (no npm/yarn support)
+- **Vue 3 only** (no Vue 2 support)
+- **Vue as external dependency** (consuming projects must install Vue separately)
+- **Direct file generation** (does not use Vite official init commands)
