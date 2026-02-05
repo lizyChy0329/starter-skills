@@ -15,7 +15,7 @@ Initialize a Vue 3 component library project with:
 ## Usage
 
 ```bash
-npx skills add https://github.com/lizyChy0329/vite-lib-vue-pnpm-starter-skill.git --skill vite-lib-vue-pnpm-starter-skill
+npx skills add git@github.com:lizyChy0329/starter-skills.git --skill vite-lib-vue-pnpm-starter-skill
 ```
 
 ## Generated Project Structure
